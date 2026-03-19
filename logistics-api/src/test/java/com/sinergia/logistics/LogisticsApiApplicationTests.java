@@ -1,10 +1,10 @@
-package backend;
+package com.sinergia.logistics;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class LogisticsApiApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,13 +1,13 @@
-package backend;
+package com.sinergia.logistics;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class LogisticsApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(LogisticsApiApplication.class, args);
 	}
 
 }
