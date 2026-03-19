@@ -101,7 +101,7 @@ public class EnvioMaritimoService {
 
         if (!entidadExistente.getNumeroGuia().equals(dto.getNumeroGuia()) && 
             envioRepository.existsByNumeroGuia(dto.getNumeroGuia())) {
-            throw new IllegalArgumentException("El nuevo número de guía ya está registrado por otro envío.");
+            throw new IllegalArgumentException("El nuevo número de guía ya está registrado.");
         }
 
         if (!entidadExistente.getCliente().getId().equals(dto.getClienteId())) {
@@ -109,12 +109,12 @@ public class EnvioMaritimoService {
                     .orElseThrow(() -> new EntityNotFoundException("El nuevo cliente no existe."));
             entidadExistente.setCliente(nuevoCliente);
         }
+        
 
-        // Se vuelve a calcular por si cambiaron la cantidad o el precio 
-        EnvioMaritimo modelo = new EnvioMaritimo();
+        EnvioMaritimo modelo = new EnvioMaritimo(); 
         modelo.setCantidad(dto.getCantidad());
         modelo.setPrecioEnvio(dto.getPrecioEnvio());
-        modelo.calcularPrecioConDescuento(); // Aplica el 3% si es marítimo
+        modelo.calcularPrecioConDescuento(); 
 
         entidadExistente.setTipoProducto(dto.getTipoProducto());
         entidadExistente.setCantidad(dto.getCantidad());
@@ -122,11 +122,12 @@ public class EnvioMaritimoService {
         entidadExistente.setPrecioEnvio(dto.getPrecioEnvio());
         entidadExistente.setPrecioDescuento(modelo.getPrecioDescuento());
         entidadExistente.setNumeroGuia(dto.getNumeroGuia());
-        
         entidadExistente.setPuertoEntrega(dto.getPuertoEntrega());
         entidadExistente.setNumeroFlota(dto.getNumeroFlota());
 
-        return mapearAResponse(envioRepository.save(entidadExistente));
+        EnvioMaritimoEntity guardado = envioRepository.saveAndFlush(entidadExistente);
+        
+        return mapearAResponse(guardado);
     }
 
     @Transactional

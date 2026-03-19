@@ -95,42 +95,31 @@ public class EnvioTerrestreService {
     @Transactional
     public EnvioResponseDTO actualizarEnvio(Long id, EnvioTerrestreRequestDTO dto) {
         
-        // Buscamos el envío que queremos actualizar
-        EnvioTerrestreEntity entidadExistente = (EnvioTerrestreEntity) envioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("El envío terrestre con ID " + id + " no existe."));
+        EnvioTerrestreEntity entidad = (EnvioTerrestreEntity) envioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ID " + id + " no existe."));
 
-        // Verificamos si cambiaron el numero de guia y si ya existe
-        if (!entidadExistente.getNumeroGuia().equals(dto.getNumeroGuia()) && 
-            envioRepository.existsByNumeroGuia(dto.getNumeroGuia())) {
-            throw new IllegalArgumentException("El nuevo número de guía ya está registrado por otro envío.");
-        }
+        System.out.println("Actualizando ID: " + id + " con Guía: " + dto.getNumeroGuia());
 
-        // Se verficia si cambiaron el cliente
-        if (!entidadExistente.getCliente().getId().equals(dto.getClienteId())) {
-            ClienteEntity nuevoCliente = clienteRepository.findById(dto.getClienteId())
-                    .orElseThrow(() -> new EntityNotFoundException("El nuevo cliente no existe."));
-            entidadExistente.setCliente(nuevoCliente);
-        }
+        entidad.setTipoProducto(dto.getTipoProducto());
+        entidad.setCantidad(dto.getCantidad());
+        entidad.setPrecioEnvio(dto.getPrecioEnvio());
+        entidad.setNumeroGuia(dto.getNumeroGuia());
+        entidad.setFechaEntrega(dto.getFechaEntrega());
+        entidad.setBodegaEntrega(dto.getBodegaEntrega());
+        entidad.setPlacaVehiculo(dto.getPlacaVehiculo());
 
-        // Se vuelve a calcular por si cambiaron la cantidad o el precio
         EnvioTerrestre modelo = new EnvioTerrestre();
         modelo.setCantidad(dto.getCantidad());
         modelo.setPrecioEnvio(dto.getPrecioEnvio());
-        modelo.calcularPrecioConDescuento(); // Vuelve a aplicar el 5% si es necesario
+        modelo.calcularPrecioConDescuento();
+        entidad.setPrecioDescuento(modelo.getPrecioDescuento());
 
-        // Actualizamos los datos de la entidad
-        entidadExistente.setTipoProducto(dto.getTipoProducto());
-        entidadExistente.setCantidad(dto.getCantidad());
-        entidadExistente.setFechaEntrega(dto.getFechaEntrega());
-        entidadExistente.setPrecioEnvio(dto.getPrecioEnvio());
-        entidadExistente.setPrecioDescuento(modelo.getPrecioDescuento());
-        entidadExistente.setNumeroGuia(dto.getNumeroGuia());
-        entidadExistente.setBodegaEntrega(dto.getBodegaEntrega());
-        entidadExistente.setPlacaVehiculo(dto.getPlacaVehiculo());
+        EnvioTerrestreEntity guardado = envioRepository.saveAndFlush(entidad); 
 
-        return mapearAResponse(envioRepository.save(entidadExistente));
+        
+        return mapearAResponse(guardado);
     }
-
+    
     @Transactional
     public void eliminarEnvio(Long id) {
         if (!envioRepository.existsById(id)) {

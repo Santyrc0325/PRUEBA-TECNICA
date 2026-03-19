@@ -1,0 +1,101 @@
+<nav class="navbar navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold d-flex align-items-center" style="cursor: pointer" (click)="irAlDashboard()">
+      <span class="fs-4 me-2"></span> Gestión de Clientes
+    </a>
+    <button class="btn btn-outline-light btn-sm fw-bold" (click)="irAlDashboard()">
+      Volver al Dashboard
+    </button>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px; z-index: 1000;">
+        <h5 class="fw-bold mb-4">
+          {{ editandoId ? 'Editar Cliente' : 'Registrar Cliente' }}
+        </h5>
+        
+        <form [formGroup]="clienteForm" (ngSubmit)="guardar()">
+          <div class="mb-3">
+            <label class="small fw-bold text-muted">Nombre Completo</label>
+            <input type="text" class="form-control bg-light border-0" formControlName="nombre" placeholder="Ej: Juan Pérez">
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold text-muted">Identificación (Cédula/RUT)</label>
+            <input type="text" class="form-control bg-light border-0" formControlName="identificacion" placeholder="Sin puntos ni guiones">
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold text-muted">Correo Electrónico</label>
+            <input type="email" class="form-control bg-light border-0" formControlName="email" placeholder="nombre@correo.com">
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold text-muted">Teléfono</label>
+            <input type="text" class="form-control bg-light border-0" formControlName="telefono" placeholder="+57 300...">
+          </div>
+          
+          <div class="d-grid gap-2 mt-4">
+            <button type="submit" class="btn btn-primary fw-bold" [disabled]="clienteForm.invalid">
+              {{ editandoId ? 'Guardar Cambios' : 'Registrar Cliente' }}
+            </button>
+            <button type="button" class="btn btn-light btn-sm text-muted" (click)="cancelarEdicion()" *ngIf="editandoId">
+              Cancelar edición
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-0 pt-4 px-4">
+          <h5 class="fw-bold mb-0">Clientes Registrados</h5>
+          <p class="text-muted small">Total: {{ listaClientes.length }} registros</p>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small text-uppercase">
+              <tr>
+                <th class="ps-4">Cliente / ID</th>
+                <th>Contacto</th>
+                <th class="pe-4 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of listaClientes; track c.id) {
+                <tr>
+                  <td class="ps-4">
+                    <div class="fw-bold text-dark">{{ c.nombre }}</div>
+                    <div class="small text-muted">{{ c.identificacion }}</div>
+                  </td>
+                  <td>
+                    <div class="small">{{ c.email }}</div>
+                    <div class="small text-muted">{{ c.telefono }}</div>
+                  </td>
+                  <td class="pe-4 text-center">
+                    <div class="btn-group shadow-sm">
+                      <button class="btn btn-sm btn-outline-warning" (click)="prepararEdicion(c)">
+                        Editar
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="eliminar(c.id)">
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="text-center py-5 text-muted">
+                    <div class="fs-2 mb-2"></div>
+                    No hay clientes registrados en el sistema.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -18,8 +18,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO request) {
         
-        // Simulación básica de validación (Para no hacer la prueba técnica infinita)
-        // En un caso real, aquí buscaríamos el usuario en la Base de Datos.
+        // Simulación básica de validación
         if ("admin".equals(request.getUsername()) && "admin123".equals(request.getPassword())) {
             
             // Si la contraseña es correcta, generamos el token
